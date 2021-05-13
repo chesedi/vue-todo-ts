@@ -1,29 +1,65 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <header>
+      <h1>Vue Todo with Typescript</h1>
+    </header>
+    <main>
+      <TodoInput
+        :item="todoText"
+        @input="updateTodoText"
+        @add="addTodoItem"
+      ></TodoInput>
+      <div>
+        <ul>
+          <TodoListItem></TodoListItem>
+          <!-- <li>아이템 1</li>
+          <li>아이템 2</li>
+          <li>아이템 3</li> -->
+        </ul>
+      </div>
+    </main>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import TodoInput from "./components/TodoInput.vue";
+import TodoListItem from "./components/TodoListItem.vue";
+
+const STORAGE_KEY = "vue-todo-ts-v1";
+const storage = {
+  fetch() {
+    const todoItems = localStorage.getItem(STORAGE_KEY) || "[]";
+    const result = JSON.parse(todoItems);
+    return result;
+  },
+};
 
 export default Vue.extend({
-  name: "App",
-  components: {
-    HelloWorld,
+  components: { TodoInput, TodoListItem },
+  data() {
+    return {
+      todoText: "",
+    };
+  },
+  methods: {
+    updateTodoText(value: string) {
+      this.todoText = value;
+    },
+    addTodoItem() {
+      const value = this.todoText;
+      localStorage.setItem(value, value);
+      this.initTodoText();
+    },
+    initTodoText() {
+      this.todoText = "";
+    },
+    fetchTodoItems() {},
+  },
+  created() {
+    this.fetchTodoItems();
   },
 });
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style scoped></style>
